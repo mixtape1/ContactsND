@@ -1,0 +1,55 @@
+/*
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+*/
+/* 
+    Created on : 14-Jun-2019, 21:57:42
+    Author     : adoma
+*/
+
+table{
+    margin: 20px;
+   text-align: left;
+}
+
+td,th{
+    padding:10px;
+   
+}
+
+a{
+    text-decoration: none;
+    color:black;
+    font-weight:700;
+    padding: 5px;
+
+    border: 1px solid lightgray;
+    border-radius:15%;
+    background-color: lightgray;
+}
+
+table td:nth-child(1n+4){
+    padding: 0;
+
+}
+table td:nth-child(3){
+    margin-right: 20px;
+
+}
+
+label {
+    line-height: 50px;
+    
+}
+
+.btn {
+    text-decoration: none;
+    color:black;
+    font-weight:700;
+    padding: 5px;
+
+    border: 1px solid lightgray;
+    border-radius:15%;
+    background-color: lightgray;
+}
