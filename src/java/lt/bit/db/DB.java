@@ -1,47 +1,96 @@
 package lt.bit.db;
 
 import java.math.BigDecimal;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Scanner;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import lt.bit.data.Address;
 import lt.bit.data.Contact;
 import lt.bit.data.Person;
 
 public class DB {
 
+    private static final String DB_NAME = "address_book";
+    private static final String CONNECTION__STRING = "jdbc:mysql://localhost:3306/";
+    private static final String TABLE_CONTACTS = "persons";
+    private static final String COLUMN_FIRST_NAME = "first_name";
+    private static final String COLUMN_LAST_NAME = "last_name";
+    private static final String COLUMN_BIRTH_DATE = "birth_date";
+    private static final String COLUMN_SALARY = "salary";
+    private static final String COLUMN_CONTACT = "contact";
+    private static final String COLUMN_EMAIL = "email";
+
     private static final List<Person> list = new ArrayList<>();
 
     static {
-        Person p = new Person("PirmasVardas", "PirmaPavarde", new Date(), new BigDecimal("154.76"));
-        list.add(p);
-        Person p2 = new Person("AntrasVardas", "AntraPavarde", new Date(), new BigDecimal("987.76"));
-        list.add(p2);
-        Person p3 = new Person("Jonis", "AntraPavarde", new Date(), new BigDecimal("987.76"));
-        list.add(p3);
-        Person p4 = new Person("AntrasVardas", "AntraPavarde", new Date(), new BigDecimal("987.76"));
-        list.add(p4);
-        
-        
-         addAddress(1, new Address("Liepklanio 79-2","Vilnius", "02120"));
-         addAddress(1, new Address("kalnio 79-2","e", "02120"));
-         addAddress(1, new Address("a 79-2","s", "02120"));
-         addAddress(2, new Address("l 79-2","Kaunas", "02120"));
-        
-         addContact(1, new Contact("Tomas", "mob"));
-         addContact(1, new Contact("Domas", "mob"));
-         addContact(1, new Contact("Fonas", "tel"));
-         addContact(2, new Contact("Tomas", "Mail"));
-         addContact(2, new Contact("Tomas2", "mo"));
-         
-         System.out.println(p.getAddresses());
-         System.out.println("hit");
-         System.out.println(p2.getAddresses());
-//     
-//        list.get(0).getAddresses().add(new Address("Liepklanio 79-2","Vilnius", "02120"));
-//        list.get(0).getAddresses().add(new Address("Liepklanio 79-2","Vilnius", "02120"));
-//        
-        
+
+        try {
+            Class.forName("com.mysql.cj.jdbc.Driver");
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(DB.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+        try {
+            Connection conn = DriverManager.getConnection(CONNECTION__STRING + DB_NAME + "?serverTimezone=UTC", "root", "admin");
+            Statement statement = conn.createStatement();
+            statement.execute("SELECT * FROM persons");
+            ResultSet results = statement.getResultSet();
+            while (results.next()) {
+                list.add(new Person(results.getString(COLUMN_FIRST_NAME),
+                        results.getString(COLUMN_LAST_NAME),
+                        /* */ results.getDate(COLUMN_BIRTH_DATE),
+                        results.getBigDecimal(COLUMN_SALARY)));
+            }
+            results.close();
+            statement.close();
+            conn.close();
+
+        } catch (SQLException ex) {
+            Logger.getLogger(DB.class.getName()).log(Level.SEVERE, null, ex);
+        }
+//
+//        PreparedStatement pst;
+//        try {
+//            pst = conn.prepareStatement("insert into persons(first_name, last_name) values (?,?)");
+//            pst.setString(1, v);
+//            pst.setString(2, p);
+//            pst.execute();
+//        } catch (SQLException ex) {
+//            Logger.getLogger(DB.class.getName()).log(Level.SEVERE, null, ex);
+//        }
+//
+//        try {
+//            conn.close();
+//        } catch (SQLException ex) {
+//            Logger.getLogger(DB.class.getName()).log(Level.SEVERE, null, ex);
+//        }
+
+//        Person p2 = new Person("AntrasVardas", "AntraPavarde", new Date(), new BigDecimal("987.76"));
+//        list.add(p2);
+//        Person p3 = new Person("Jonis", "AntraPavarde", new Date(), new BigDecimal("987.76"));
+//        list.add(p3);
+//        Person p4 = new Person("AntrasVardas", "AntraPavarde", new Date(), new BigDecimal("987.76"));
+//        list.add(p4);
+//
+//        addAddress(1, new Address("Liepklanio 79-2", "Vilnius", "02120"));
+//        addAddress(1, new Address("kalnio 79-2", "e", "02120"));
+//        addAddress(1, new Address("a 79-2", "s", "02120"));
+//        addAddress(2, new Address("l 79-2", "Kaunas", "02120"));
+//
+//        addContact(1, new Contact("Tomas", "mob"));
+//        addContact(1, new Contact("Domas", "mob"));
+//        addContact(1, new Contact("Fonas", "tel"));
+//        addContact(2, new Contact("Tomas", "Mail"));
+//        addContact(2, new Contact("Tomas2", "mo"));
     }
 
     public static List<Person> getAll() {
@@ -57,7 +106,6 @@ public class DB {
         return all;
     }
 
-    
     //    grazina visus kontaktus is visu zmoniu
     public static List<Contact> getAllContacts() {
         List<Contact> all = new ArrayList<>();
@@ -210,7 +258,7 @@ public class DB {
         return currentAddress;
     }
 
-    public static Contact updateContact(Contact c) {    
+    public static Contact updateContact(Contact c) {
         if (c == null) {
             return null;
         }
