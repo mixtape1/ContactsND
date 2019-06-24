@@ -34,14 +34,21 @@ public class Person {
      }
     }
 
-    public Person(String firstName, String lastName, Date birthDate, BigDecimal salary) {
+        public Person(String firstName, String lastName, Date birthDate, BigDecimal salary) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.birthDate = birthDate;
         this.salary = salary;
-        synchronized(nextID){
-            this.id = nextID++;
-        }
+        this.id = id;
+        this.contacts = new ArrayList<>();
+         this.addresses = new ArrayList<>();
+    }
+    public Person(String firstName, String lastName, Date birthDate, BigDecimal salary, int id) {
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.birthDate = birthDate;
+        this.salary = salary;
+        this.id = id;
         this.contacts = new ArrayList<>();
          this.addresses = new ArrayList<>();
     }

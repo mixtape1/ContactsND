@@ -61,13 +61,12 @@ public class SavePersonServlet extends HttpServlet {
         } catch (Exception e) {
         }
 
-        if (idx <10) {
             if (idxs == null) {
                 DB.getAll().add(new Person(firstName, lastName, nDate, salaryBig));
             } else {
                 DB.getAll().set(DB.getAll().indexOf(DB.getById(idx)), new Person(firstName, lastName, nDate, salaryBig));
             }
-        }
+        
 
         response.sendRedirect("index.jsp");
     }

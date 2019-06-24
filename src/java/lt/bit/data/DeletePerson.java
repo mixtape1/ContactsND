@@ -36,7 +36,6 @@ public class DeletePerson extends HttpServlet {
             throws ServletException, IOException {
 
         String idxString = request.getParameter("idx");
-        System.out.println(idxString);
         int idx = -1;
         if (idxString != null) {
             try {
@@ -44,23 +43,10 @@ public class DeletePerson extends HttpServlet {
             } catch (Exception e) {
                 System.out.println("Wrong request type");
             }
-
         }
-
-            System.out.println(idxString);
-            Person delete= null;
-            for (Person object : DB.getAll()) {
-
-                if (object.getId() == idx) {
-                    delete = object;
-                }
-            }
-            
-            if(delete!=null){
-                DB.getAll().remove(delete);
-                response.sendRedirect("index.jsp");
-            }
-//        DB.getAll().remove();
+        
+        DB.delete(idx);
+        response.sendRedirect("index.jsp");
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
