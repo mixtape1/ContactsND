@@ -33,7 +33,6 @@ public class DB {
     private static final List<Person> list = new ArrayList<>();
 
     static {
-        
 
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");
@@ -60,8 +59,33 @@ public class DB {
         } catch (SQLException ex) {
             Logger.getLogger(DB.class.getName()).log(Level.SEVERE, null, ex);
         }
-        
 
+    }
+
+    public static void add(Person p) {
+
+        try {
+            Connection conn = openCon();
+            PreparedStatement pst = conn.prepareStatement("insert into persons(first_name, last_name, salary, id) values (?,?,?,?)");
+            pst.setString(1, p.getFirstName());
+            pst.setString(2, p.getLastName());
+            pst.setBigDecimal(3, p.getSalary());
+            pst.setInt(4, p.getId());
+            pst.execute();
+
+            Statement statement = conn.createStatement();
+
+            list.add(p);
+
+            conn.close();
+
+        } catch (SQLException ex) {
+            Logger.getLogger(DB.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+//        if (!list.contains(p)) {
+//          p.createId();
+//        }
     }
 
     public static List<Person> getAll() {
@@ -169,13 +193,20 @@ public class DB {
         return null;
     }
 
-    public static Person add(Person p) {
-        if (!list.contains(p)) {
-//            p.createId();
-            list.add(p);
-            return p;
+//    to show the new updated list of persons
+    public static void updateListOfPersons() {
+
+    }
+
+//    Mano
+    public static Connection openCon() {
+        Connection conn = null;
+        try {
+            conn = DriverManager.getConnection(CONNECTION__STRING + DB_NAME + "?serverTimezone=UTC", "root", "admin");
+        } catch (SQLException ex) {
+            Logger.getLogger(DB.class.getName()).log(Level.SEVERE, null, ex);
         }
-        return null;
+        return conn;
     }
 
     public static Address addAddress(Integer personId, Address a) {
@@ -243,26 +274,21 @@ public class DB {
 
     public static void delete(Integer id) {
 
-        
         try {
-            Connection conn = DriverManager.getConnection(CONNECTION__STRING + DB_NAME + "?serverTimezone=UTC", "root", "admin");
+//            Connection conn = DriverManager.getConnection(CONNECTION__STRING + DB_NAME + "?serverTimezone=UTC", "root", "admin");
+            Connection conn = openCon();
             Statement statement = conn.createStatement();
-            statement.execute("DELETE FROM persons WHERE id=" + id );
-  
+            statement.execute("DELETE FROM persons WHERE id=" + id);
             statement.close();
             conn.close();
-
         } catch (SQLException ex) {
             Logger.getLogger(DB.class.getName()).log(Level.SEVERE, null, ex);
         }
         Person p = getById(id);
-        
         if (p != null) {
             list.remove(p);
         }
 //        return p;
-        
-        
     }
 
     public static Address deleteAddress(Integer id) {
